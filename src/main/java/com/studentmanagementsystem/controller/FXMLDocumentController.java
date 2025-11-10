@@ -73,7 +73,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML private Button clearRequestBtn;
     @FXML private TableView<Request> requestsTable;
     @FXML private TableColumn<Request, Long> colRequestId;
-    @FXML private TableColumn<Request, Long> colStudentIdReq;
+    @FXML private TableColumn<Request, String> colStudentNameReq; // NEW: Show student name instead of ID
     @FXML private TableColumn<Request, Long> colAcademicIdReq;
     @FXML private TableColumn<Request, String> colRequestNature;
     @FXML private TableColumn<Request, String> colSendingAddress;
@@ -100,6 +100,7 @@ public class FXMLDocumentController implements Initializable {
         initializeChoiceBoxes();
         setupTabListeners();
         setupTableListeners();
+        setupDoubleClickListeners(); // NEW: For showing details
         loadStudents(); // Load initial data for first tab
     }
     
@@ -129,9 +130,17 @@ public class FXMLDocumentController implements Initializable {
         colCertificateType.setCellValueFactory(new PropertyValueFactory<>("certificateType"));
         colOtherDocs.setCellValueFactory(new PropertyValueFactory<>("otherDocs"));
         
-        // Configure Request table columns
+        // Configure Request table columns - UPDATED for relationships
         colRequestId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colStudentIdReq.setCellValueFactory(new PropertyValueFactory<>("studentId"));
+        colStudentNameReq.setCellValueFactory(cellData -> {
+            // Show student name if available, otherwise show ID
+            Request request = cellData.getValue();
+            if (request.getStudent() != null) {
+                return new SimpleStringProperty(request.getStudent().getStudentName());
+            } else {
+                return new SimpleStringProperty("Student ID: " + request.getStudentId());
+            }
+        });
         colAcademicIdReq.setCellValueFactory(new PropertyValueFactory<>("academicId"));
         colRequestNature.setCellValueFactory(new PropertyValueFactory<>("requestNature"));
         colSendingAddress.setCellValueFactory(new PropertyValueFactory<>("sendingAddress"));
@@ -147,12 +156,18 @@ public class FXMLDocumentController implements Initializable {
     }
     
     private void setupActionButtons() {
-        // Student table actions
+        // Student table actions - UPDATED to show details
         colStudentActions.setCellFactory(param -> new TableCell<Student, String>() {
+            private final Button detailsBtn = new Button("Details");
             private final Button editBtn = new Button("Edit");
             private final Button deleteBtn = new Button("Delete");
             
             {
+                detailsBtn.setOnAction(event -> {
+                    Student student = getTableView().getItems().get(getIndex());
+                    showStudentDetails(student);
+                });
+                
                 editBtn.setOnAction(event -> {
                     Student student = getTableView().getItems().get(getIndex());
                     editStudent(student);
@@ -163,6 +178,7 @@ public class FXMLDocumentController implements Initializable {
                     deleteStudent(student.getId());
                 });
                 
+                detailsBtn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 10px; -fx-padding: 5px;");
                 editBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 10px; -fx-padding: 5px;");
                 deleteBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 10px; -fx-padding: 5px;");
             }
@@ -173,7 +189,7 @@ public class FXMLDocumentController implements Initializable {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    HBox buttons = new HBox(5, editBtn, deleteBtn);
+                    HBox buttons = new HBox(5, detailsBtn, editBtn, deleteBtn);
                     buttons.setStyle("-fx-alignment: center;");
                     setGraphic(buttons);
                 }
@@ -213,12 +229,18 @@ public class FXMLDocumentController implements Initializable {
             }
         });
         
-        // Request table actions
+        // Request table actions - UPDATED to show details
         colRequestActions.setCellFactory(param -> new TableCell<Request, String>() {
+            private final Button detailsBtn = new Button("Details");
             private final Button editBtn = new Button("Edit");
             private final Button deleteBtn = new Button("Delete");
             
             {
+                detailsBtn.setOnAction(event -> {
+                    Request request = getTableView().getItems().get(getIndex());
+                    showRequestDetails(request);
+                });
+                
                 editBtn.setOnAction(event -> {
                     Request request = getTableView().getItems().get(getIndex());
                     editRequest(request);
@@ -229,6 +251,7 @@ public class FXMLDocumentController implements Initializable {
                     deleteRequest(request.getId());
                 });
                 
+                detailsBtn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 10px; -fx-padding: 5px;");
                 editBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 10px; -fx-padding: 5px;");
                 deleteBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 10px; -fx-padding: 5px;");
             }
@@ -239,7 +262,7 @@ public class FXMLDocumentController implements Initializable {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    HBox buttons = new HBox(5, editBtn, deleteBtn);
+                    HBox buttons = new HBox(5, detailsBtn, editBtn, deleteBtn);
                     buttons.setStyle("-fx-alignment: center;");
                     setGraphic(buttons);
                 }
@@ -260,13 +283,13 @@ public class FXMLDocumentController implements Initializable {
                 if (newTab != null) {
                     switch (newTab.getText()) {
                         case "Students":
-                            loadStudents();
+                            loadStudentsWithRelations(); // UPDATED: Load with relations
                             break;
                         case "Academic Records":
                             loadAcademicRecords();
                             break;
                         case "Requests":
-                            loadRequests();
+                            loadRequestsWithStudent(); // UPDATED: Load with student info
                             break;
                     }
                 }
@@ -290,6 +313,143 @@ public class FXMLDocumentController implements Initializable {
             });
     }
     
+    // NEW: Setup double-click listeners for detailed views
+    private void setupDoubleClickListeners() {
+        studentsTable.setRowFactory(tv -> {
+            TableRow<Student> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    Student student = row.getItem();
+                    showStudentDetails(student);
+                }
+            });
+            return row;
+        });
+        
+        requestsTable.setRowFactory(tv -> {
+            TableRow<Request> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    Request request = row.getItem();
+                    showRequestDetails(request);
+                }
+            });
+            return row;
+        });
+    }
+    
+    // NEW: Show detailed student information with academics and requests
+    private void showStudentDetails(Student student) {
+        // Load full student data with relationships
+        Student fullStudent = apiService.getStudentWithRelations(student.getId());
+        if (fullStudent == null) {
+            showAlert("Error", "Could not load student details", Alert.AlertType.ERROR);
+            return;
+        }
+        
+        StringBuilder details = new StringBuilder();
+        details.append("=== STUDENT DETAILS ===\n\n");
+        details.append("ID: ").append(fullStudent.getId()).append("\n");
+        details.append("Name: ").append(fullStudent.getStudentName()).append("\n");
+        details.append("Email: ").append(fullStudent.getEmail()).append("\n");
+        details.append("Phone: ").append(fullStudent.getPhoneNumber()).append("\n");
+        details.append("Birth Date: ").append(fullStudent.getBirthDate() != null ? 
+            fullStudent.getBirthDate().format(dateFormatter) : "N/A").append("\n\n");
+        
+        details.append("=== ACADEMIC RECORDS ===\n");
+        if (fullStudent.getAcademics() != null && !fullStudent.getAcademics().isEmpty()) {
+            for (Academic academic : fullStudent.getAcademics()) {
+                details.append("• ").append(academic.getProgramme())
+                       .append(" (").append(academic.getAcademicYear()).append(")\n");
+                details.append("  Certificate: ").append(academic.getCertificateType()).append("\n");
+                if (academic.getOtherDocs() != null && !academic.getOtherDocs().isEmpty()) {
+                    details.append("  Other Docs: ").append(academic.getOtherDocs()).append("\n");
+                }
+                details.append("\n");
+            }
+        } else {
+            details.append("No academic records found\n\n");
+        }
+        
+        details.append("=== REQUESTS ===\n");
+        if (fullStudent.getRequests() != null && !fullStudent.getRequests().isEmpty()) {
+            for (Request request : fullStudent.getRequests()) {
+                details.append("• ").append(request.getRequestNature()).append("\n");
+                details.append("  Status: ").append(request.getRequestStatus()).append("\n");
+                details.append("  Date: ").append(request.getRequestDate() != null ? 
+                    request.getRequestDate().format(dateTimeFormatter) : "N/A").append("\n");
+                details.append("  Sending: ").append(request.getSendingAddress()).append("\n");
+                details.append("  Receiving: ").append(request.getReceivingAddress()).append("\n\n");
+            }
+        } else {
+            details.append("No requests found\n");
+        }
+        
+        TextArea textArea = new TextArea(details.toString());
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefSize(600, 400);
+        
+        ScrollPane scrollPane = new ScrollPane(textArea);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Student Details");
+        alert.setHeaderText("Complete Student Information");
+        alert.getDialogPane().setContent(scrollPane);
+        alert.showAndWait();
+    }
+    
+    // NEW: Show detailed request information with student
+    private void showRequestDetails(Request request) {
+        // Load full request data with student relationship
+        Request fullRequest = apiService.getRequestWithStudent(request.getId());
+        if (fullRequest == null) {
+            showAlert("Error", "Could not load request details", Alert.AlertType.ERROR);
+            return;
+        }
+        
+        StringBuilder details = new StringBuilder();
+        details.append("=== REQUEST DETAILS ===\n\n");
+        details.append("ID: ").append(fullRequest.getId()).append("\n");
+        details.append("Nature: ").append(fullRequest.getRequestNature()).append("\n");
+        details.append("Status: ").append(fullRequest.getRequestStatus()).append("\n");
+        details.append("Date: ").append(fullRequest.getRequestDate() != null ? 
+            fullRequest.getRequestDate().format(dateTimeFormatter) : "N/A").append("\n");
+        details.append("Sending Address: ").append(fullRequest.getSendingAddress()).append("\n");
+        details.append("Receiving Address: ").append(fullRequest.getReceivingAddress()).append("\n\n");
+        
+        details.append("=== STUDENT INFORMATION ===\n");
+        if (fullRequest.getStudent() != null) {
+            Student student = fullRequest.getStudent();
+            details.append("ID: ").append(student.getId()).append("\n");
+            details.append("Name: ").append(student.getStudentName()).append("\n");
+            details.append("Email: ").append(student.getEmail()).append("\n");
+            details.append("Phone: ").append(student.getPhoneNumber()).append("\n");
+            details.append("Birth Date: ").append(student.getBirthDate() != null ? 
+                student.getBirthDate().format(dateFormatter) : "N/A").append("\n");
+        } else {
+            details.append("Student ID: ").append(fullRequest.getStudentId()).append("\n");
+            details.append("(Student details not available)\n");
+        }
+        
+        TextArea textArea = new TextArea(details.toString());
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefSize(500, 300);
+        
+        ScrollPane scrollPane = new ScrollPane(textArea);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Request Details");
+        alert.setHeaderText("Complete Request Information");
+        alert.getDialogPane().setContent(scrollPane);
+        alert.showAndWait();
+    }
+    
     // [Keep all your existing methods for addStudent, updateStudent, searchStudents, etc.]
     // Student Methods
     @FXML
@@ -310,7 +470,7 @@ public class FXMLDocumentController implements Initializable {
             if (createdStudent != null) {
                 showAlert("Success", "Student added successfully!", Alert.AlertType.INFORMATION);
                 clearStudentForm();
-                loadStudents();
+                loadStudentsWithRelations(); // UPDATED
             }
         } catch (Exception e) {
             showAlert("Error", "Failed to add student: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -334,7 +494,7 @@ public class FXMLDocumentController implements Initializable {
             if (updatedStudent != null) {
                 showAlert("Success", "Student updated successfully!", Alert.AlertType.INFORMATION);
                 clearStudentForm();
-                loadStudents();
+                loadStudentsWithRelations(); // UPDATED
             }
         } catch (Exception e) {
             showAlert("Error", "Failed to update student: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -395,7 +555,7 @@ public class FXMLDocumentController implements Initializable {
             boolean success = apiService.deleteStudent(studentId);
             if (success) {
                 showAlert("Success", "Student deleted successfully!", Alert.AlertType.INFORMATION);
-                loadStudents();
+                loadStudentsWithRelations(); // UPDATED
             } else {
                 showAlert("Error", "Failed to delete student", Alert.AlertType.ERROR);
             }
@@ -510,7 +670,7 @@ public class FXMLDocumentController implements Initializable {
             if (createdRequest != null) {
                 showAlert("Success", "Request submitted successfully!", Alert.AlertType.INFORMATION);
                 clearRequestForm();
-                loadRequests();
+                loadRequestsWithStudent(); // UPDATED
             }
         } catch (NumberFormatException e) {
             showAlert("Error", "Please enter valid numeric IDs", Alert.AlertType.ERROR);
@@ -538,7 +698,7 @@ public class FXMLDocumentController implements Initializable {
             if (updatedRequest != null) {
                 showAlert("Success", "Request updated successfully!", Alert.AlertType.INFORMATION);
                 clearRequestForm();
-                loadRequests();
+                loadRequestsWithStudent(); // UPDATED
             }
         } catch (NumberFormatException e) {
             showAlert("Error", "Please enter valid numeric IDs", Alert.AlertType.ERROR);
@@ -580,19 +740,28 @@ public class FXMLDocumentController implements Initializable {
             boolean success = apiService.deleteRequest(requestId);
             if (success) {
                 showAlert("Success", "Request deleted successfully!", Alert.AlertType.INFORMATION);
-                loadRequests();
+                loadRequestsWithStudent(); // UPDATED
             } else {
                 showAlert("Error", "Failed to delete request", Alert.AlertType.ERROR);
             }
         }
     }
     
-    // Data Loading Methods
+    // Data Loading Methods - UPDATED for relationships
     private void loadStudents() {
         try {
             studentList.setAll(apiService.getAllStudents());
         } catch (Exception e) {
             showAlert("Error", "Failed to load students: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+    
+    // NEW: Load students with relationships
+    private void loadStudentsWithRelations() {
+        try {
+            studentList.setAll(apiService.getAllStudentsWithRelations());
+        } catch (Exception e) {
+            showAlert("Error", "Failed to load students with relations: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
     
@@ -609,6 +778,15 @@ public class FXMLDocumentController implements Initializable {
             requestList.setAll(apiService.getAllRequests());
         } catch (Exception e) {
             showAlert("Error", "Failed to load requests: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+    
+    // NEW: Load requests with student relationships
+    private void loadRequestsWithStudent() {
+        try {
+            requestList.setAll(apiService.getAllRequestsWithStudent());
+        } catch (Exception e) {
+            showAlert("Error", "Failed to load requests with student info: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
     

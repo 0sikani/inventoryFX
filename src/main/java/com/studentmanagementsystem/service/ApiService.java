@@ -7,7 +7,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ApiService {
@@ -16,8 +20,6 @@ public class ApiService {
     
     public ApiService() {
         this.restTemplate = new RestTemplate();
-        // Spring Boot's RestTemplate with Jackson should handle Java 8 dates automatically
-        // in modern versions without needing explicit JavaTimeModule configuration
     }
     
     // Student methods
@@ -34,6 +36,36 @@ public class ApiService {
             System.err.println("Error fetching students: " + e.getMessage());
             e.printStackTrace();
             return List.of();
+        }
+    }
+    
+    public List<Student> getAllStudentsWithRelations() {
+        try {
+            ResponseEntity<List<Student>> response = restTemplate.exchange(
+                BASE_URL + "/api/student/with-relations",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Student>>() {}
+            );
+            return response.getBody();
+        } catch (Exception e) {
+            System.err.println("Error fetching students with relations: " + e.getMessage());
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+
+    public Student getStudentWithRelations(Long id) {
+        try {
+            ResponseEntity<Student> response = restTemplate.getForEntity(
+                BASE_URL + "/api/student/" + id + "/with-relations",
+                Student.class
+            );
+            return response.getBody();
+        } catch (Exception e) {
+            System.err.println("Error fetching student with relations: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
     
@@ -135,6 +167,23 @@ public class ApiService {
         }
     }
     
+    // NEW: Get requests with student relationships
+    public List<Request> getAllRequestsWithStudent() {
+        try {
+            ResponseEntity<List<Request>> response = restTemplate.exchange(
+                BASE_URL + "/api/request/with-student",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Request>>() {}
+            );
+            return response.getBody();
+        } catch (Exception e) {
+            System.err.println("Error fetching requests with student: " + e.getMessage());
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+    
     public Request createRequest(Request request) {
         try {
             return restTemplate.postForObject(BASE_URL + "/api/request", request, Request.class);
@@ -164,6 +213,54 @@ public class ApiService {
             System.err.println("Error deleting request: " + e.getMessage());
             e.printStackTrace();
             return false;
+        }
+    }
+    
+    // Additional methods for relationships
+    public List<Academic> getStudentAcademics(Long studentId) {
+        try {
+            ResponseEntity<List<Academic>> response = restTemplate.exchange(
+                BASE_URL + "/api/academic/student/" + studentId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Academic>>() {}
+            );
+            return response.getBody();
+        } catch (Exception e) {
+            System.err.println("Error fetching student academics: " + e.getMessage());
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+    
+    public List<Request> getStudentRequests(Long studentId) {
+        try {
+            ResponseEntity<List<Request>> response = restTemplate.exchange(
+                BASE_URL + "/api/request/student/" + studentId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Request>>() {}
+            );
+            return response.getBody();
+        } catch (Exception e) {
+            System.err.println("Error fetching student requests: " + e.getMessage());
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+    
+    // NEW: Get request with student relationship
+    public Request getRequestWithStudent(Long id) {
+        try {
+            ResponseEntity<Request> response = restTemplate.getForEntity(
+                BASE_URL + "/api/request/" + id + "/with-student",
+                Request.class
+            );
+            return response.getBody();
+        } catch (Exception e) {
+            System.err.println("Error fetching request with student: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
 }

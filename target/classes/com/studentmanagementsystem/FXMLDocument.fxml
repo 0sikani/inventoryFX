@@ -144,8 +144,8 @@
                         <!-- Requests Table - Reduced height -->
                         <TableView fx:id="requestsTable" layoutX="540.0" layoutY="20.0" prefHeight="520.0" prefWidth="750.0">
                            <columns>
-                              <TableColumn fx:id="colRequestId" prefWidth="80.0" text="ID" />
                               <TableColumn fx:id="colStudentIdReq" prefWidth="80.0" text="Student ID" />
+                              <TableColumn fx:id="colStudentNameReq" prefWidth="150.0" text="Student Name" />
                               <TableColumn fx:id="colAcademicIdReq" prefWidth="80.0" text="Academic ID" />
                               <TableColumn fx:id="colRequestNature" prefWidth="150.0" text="Request Nature" />
                               <TableColumn fx:id="colSendingAddress" prefWidth="120.0" text="Sending Address" />
