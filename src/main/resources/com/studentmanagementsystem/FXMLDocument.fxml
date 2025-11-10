@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane fx:id="main_form" prefHeight="720.0" prefWidth="1350.0" styleClass="main-pane" stylesheets="@studentManagement.css" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.studentmanagementsystem.controller.FXMLDocumentController">
+   <children>
+      <!-- Header -->
+      <BorderPane layoutY="0.0" prefHeight="80.0" prefWidth="1350.0" styleClass="header">
+         <center>
+            <Label text="Inventory" styleClass="header-title">
+               <font>
+                  <Font name="System Bold" size="28.0" />
+               </font>
+            </Label>
+         </center>
+         <right>
+            <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#close" styleClass="close-btn" text="X" />
+         </right>
+      </BorderPane>
+
+      <!-- Navigation Tabs -->
+      <TabPane fx:id="mainTabPane" layoutX="20.0" layoutY="100.0" prefHeight="600.0" prefWidth="1310.0" styleClass="tab-pane">
+         <tabs>
+            <!-- Students Tab -->
+            <Tab text="Students">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="570.0" prefWidth="1310.0">
+                     <children>
+                        <!-- Search Section -->
+                        <VBox layoutX="20.0" layoutY="20.0" prefHeight="70.0" prefWidth="1270.0" spacing="15.0" styleClass="search-section">
+                           <children>
+                              <HBox spacing="20.0">
+                                 <children>
+                                    <TextField fx:id="studentSearchField" prefWidth="500.0" promptText="Search by name, email or phone" />
+                                    <Button fx:id="searchStudentBtn" mnemonicParsing="false" onAction="#searchStudents" styleClass="search-btn" text="Search" />
+                                    <Button fx:id="clearStudentSearchBtn" mnemonicParsing="false" onAction="#clearStudentSearch" styleClass="clear-btn" text="Clear" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+
+                        <!-- Student Form -->
+                        <VBox layoutX="20.0" layoutY="110.0" prefHeight="220.0" prefWidth="500.0" spacing="12.0" styleClass="form-section">
+                           <children>
+                              <Label text="Add/Edit Student" styleClass="form-title" />
+                              <TextField fx:id="studentName" prefWidth="480.0" promptText="Student Name *" />
+                              <TextField fx:id="studentEmail" prefWidth="480.0" promptText="Email *" />
+                              <TextField fx:id="studentPhone" prefWidth="480.0" promptText="Phone Number" />
+                              <DatePicker fx:id="studentBirthDate" prefWidth="480.0" promptText="Birth Date" />
+                              <HBox spacing="15.0">
+                                 <children>
+                                    <Button fx:id="addStudentBtn" mnemonicParsing="false" onAction="#addStudent" styleClass="add-btn" text="Add Student" />
+                                    <Button fx:id="updateStudentBtn" mnemonicParsing="false" onAction="#updateStudent" styleClass="update-btn" text="Update Student" />
+                                    <Button fx:id="clearStudentBtn" mnemonicParsing="false" onAction="#clearStudentForm" styleClass="clear-btn" text="Clear" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+
+                        <!-- Students Table - Reduced height -->
+                        <TableView fx:id="studentsTable" layoutX="540.0" layoutY="110.0" prefHeight="420.0" prefWidth="750.0">
+                           <columns>
+                              <TableColumn fx:id="colStudentId" prefWidth="80.0" text="ID" />
+                              <TableColumn fx:id="colStudentName" prefWidth="150.0" text="Full Name" />
+                              <TableColumn fx:id="colStudentEmail" prefWidth="200.0" text="Email Address" />
+                              <TableColumn fx:id="colStudentPhone" prefWidth="120.0" text="Phone" />
+                              <TableColumn fx:id="colStudentBirthDate" prefWidth="120.0" text="Birth Date" />
+                              <TableColumn fx:id="colStudentActions" prefWidth="120.0" text="Actions" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+
+            <!-- Academic Records Tab -->
+            <Tab text="Academic Records">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="570.0" prefWidth="1310.0">
+                     <children>
+                        <!-- Academic Form -->
+                        <VBox layoutX="20.0" layoutY="20.0" prefHeight="280.0" prefWidth="500.0" spacing="12.0" styleClass="form-section">
+                           <children>
+                              <Label text="Academic Record" styleClass="form-title" />
+                              <TextField fx:id="academicYear" prefWidth="480.0" promptText="Academic Year *" />
+                              <TextField fx:id="programme" prefWidth="480.0" promptText="Programme *" />
+                              <TextField fx:id="certificateType" prefWidth="480.0" promptText="Certificate Type" />
+                              <TextField fx:id="otherDocs" prefWidth="480.0" promptText="Other Documents" />
+                              <HBox spacing="15.0">
+                                 <children>
+                                    <Button fx:id="addAcademicBtn" mnemonicParsing="false" onAction="#addAcademicRecord" styleClass="add-btn" text="Add Record" />
+                                    <Button fx:id="updateAcademicBtn" mnemonicParsing="false" onAction="#updateAcademicRecord" styleClass="update-btn" text="Update Record" />
+                                    <Button fx:id="clearAcademicBtn" mnemonicParsing="false" onAction="#clearAcademicForm" styleClass="clear-btn" text="Clear" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+
+                        <!-- Academic Records Table - Reduced height -->
+                        <TableView fx:id="academicTable" layoutX="540.0" layoutY="20.0" prefHeight="520.0" prefWidth="750.0">
+                           <columns>
+                              <TableColumn fx:id="colAcademicId" prefWidth="80.0" text="ID" />
+                              <TableColumn fx:id="colAcademicYear" prefWidth="120.0" text="Academic Year" />
+                              <TableColumn fx:id="colProgramme" prefWidth="200.0" text="Programme" />
+                              <TableColumn fx:id="colCertificateType" prefWidth="150.0" text="Certificate Type" />
+                              <TableColumn fx:id="colOtherDocs" prefWidth="150.0" text="Other Documents" />
+                              <TableColumn fx:id="colAcademicActions" prefWidth="120.0" text="Actions" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+
+            <!-- Requests Tab -->
+            <Tab text="Requests">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="570.0" prefWidth="1310.0">
+                     <children>
+                        <!-- Request Form -->
+                        <VBox layoutX="20.0" layoutY="20.0" prefHeight="380.0" prefWidth="500.0" spacing="12.0" styleClass="form-section">
+                           <children>
+                              <Label text="New Request" styleClass="form-title" />
+                              <TextField fx:id="studentIdField" prefWidth="480.0" promptText="Student ID *" />
+                              <TextField fx:id="academicIdField" prefWidth="480.0" promptText="Academic ID" />
+                              <TextField fx:id="requestNature" prefWidth="480.0" promptText="Request Nature *" />
+                              <TextField fx:id="sendingAddress" prefWidth="480.0" promptText="Sending Address" />
+                              <TextField fx:id="receivingAddress" prefWidth="480.0" promptText="Receiving Address" />
+                              <Label text="Request Status:" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                              <ChoiceBox fx:id="requestStatus" prefWidth="480.0" />
+                              <HBox spacing="15.0">
+                                 <children>
+                                    <Button fx:id="addRequestBtn" mnemonicParsing="false" onAction="#addRequest" styleClass="add-btn" text="Submit Request" />
+                                    <Button fx:id="updateRequestBtn" mnemonicParsing="false" onAction="#updateRequest" styleClass="update-btn" text="Update Request" />
+                                    <Button fx:id="clearRequestBtn" mnemonicParsing="false" onAction="#clearRequestForm" styleClass="clear-btn" text="Clear" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+
+                        <!-- Requests Table - Reduced height -->
+                        <TableView fx:id="requestsTable" layoutX="540.0" layoutY="20.0" prefHeight="520.0" prefWidth="750.0">
+                           <columns>
+                              <TableColumn fx:id="colRequestId" prefWidth="80.0" text="ID" />
+                              <TableColumn fx:id="colStudentIdReq" prefWidth="80.0" text="Student ID" />
+                              <TableColumn fx:id="colAcademicIdReq" prefWidth="80.0" text="Academic ID" />
+                              <TableColumn fx:id="colRequestNature" prefWidth="150.0" text="Request Nature" />
+                              <TableColumn fx:id="colSendingAddress" prefWidth="120.0" text="Sending Address" />
+                              <TableColumn fx:id="colReceivingAddress" prefWidth="120.0" text="Receiving Address" />
+                              <TableColumn fx:id="colRequestStatus" prefWidth="100.0" text="Status" />
+                              <TableColumn fx:id="colRequestDate" prefWidth="150.0" text="Date Created" />
+                              <TableColumn fx:id="colRequestActions" prefWidth="120.0" text="Actions" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

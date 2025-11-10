@@ -1,0 +1,66 @@
+/* Icon styles */
+.icon {
+    -fx-font-size: 48px;
+    -fx-fill: white;
+}
+
+.left-form .icon {
+    -fx-font-size: 80px;
+}
+
+.right-form .icon {
+    -fx-font-size: 36px;
+}
+
+/* Left form styles */
+.left-form {
+    -fx-background-color: linear-gradient(to bottom right, #2d658c, #2ca8b2);
+}
+
+/* Right form styles */
+.right-form {
+    -fx-background-color: #fff;
+}
+
+/* Text field styles */
+.textfield {
+    -fx-background-color: transparent;
+    -fx-border-color: #2d658c;
+    -fx-border-width: 0px 0px 1.5px 0px;
+    -fx-font-size: 13px;
+    -fx-font-family: "Tahoma";
+}
+
+.textfield:focused {
+    -fx-border-color: linear-gradient(to bottom right, #2d658c, #2ca8b2);
+}
+
+/* Login button styles */
+.login-btn {
+    -fx-background-color: linear-gradient(to bottom right, #2d658c, #2ca8b2);
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-text-fill: #fff;
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial";
+}
+
+.login-btn:hover {
+    -fx-background-color: linear-gradient(to bottom right, #3a7ca5, #3bb9c5);
+}
+
+/* Close button styles */
+.close {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-text-fill: #2d658c;
+    -fx-border-color: #2d658c;
+    -fx-border-width: 1px;
+    -fx-border-radius: 2px;
+}
+
+.close:hover {
+    -fx-background-color: #f13f57;
+    -fx-text-fill: #fff;
+    -fx-border-color: #f13f57;
+}
