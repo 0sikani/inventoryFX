@@ -22,6 +22,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 public class FXMLDocumentController implements Initializable {
     
+    // Main components
     @FXML private AnchorPane main_form;
     @FXML private Button closeBtn;
     @FXML private TabPane mainTabPane;
@@ -73,7 +74,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML private Button clearRequestBtn;
     @FXML private TableView<Request> requestsTable;
     @FXML private TableColumn<Request, Long> colRequestId;
-    @FXML private TableColumn<Request, String> colStudentNameReq; // NEW: Show student name instead of ID
+    @FXML private TableColumn<Request, Long> colStudentIdReq;
+    @FXML private TableColumn<Request, String> colStudentNameReq;
     @FXML private TableColumn<Request, Long> colAcademicIdReq;
     @FXML private TableColumn<Request, String> colRequestNature;
     @FXML private TableColumn<Request, String> colSendingAddress;
@@ -100,8 +102,8 @@ public class FXMLDocumentController implements Initializable {
         initializeChoiceBoxes();
         setupTabListeners();
         setupTableListeners();
-        setupDoubleClickListeners(); // NEW: For showing details
-        loadStudents(); // Load initial data for first tab
+        setupDoubleClickListeners();
+        loadStudents();
     }
     
     private void initializeTables() {
@@ -113,7 +115,7 @@ public class FXMLDocumentController implements Initializable {
         academicTable.setItems(academicList);
         requestsTable.setItems(requestList);
         
-        // Configure Student table columns with proper data binding
+        // Configure Student table columns
         colStudentId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colStudentName.setCellValueFactory(new PropertyValueFactory<>("studentName"));
         colStudentEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -130,10 +132,10 @@ public class FXMLDocumentController implements Initializable {
         colCertificateType.setCellValueFactory(new PropertyValueFactory<>("certificateType"));
         colOtherDocs.setCellValueFactory(new PropertyValueFactory<>("otherDocs"));
         
-        // Configure Request table columns - UPDATED for relationships
+        // Configure Request table columns
         colRequestId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colStudentIdReq.setCellValueFactory(new PropertyValueFactory<>("studentId"));
         colStudentNameReq.setCellValueFactory(cellData -> {
-            // Show student name if available, otherwise show ID
             Request request = cellData.getValue();
             if (request.getStudent() != null) {
                 return new SimpleStringProperty(request.getStudent().getStudentName());
@@ -156,7 +158,7 @@ public class FXMLDocumentController implements Initializable {
     }
     
     private void setupActionButtons() {
-        // Student table actions - UPDATED to show details
+        // Student table actions
         colStudentActions.setCellFactory(param -> new TableCell<Student, String>() {
             private final Button detailsBtn = new Button("Details");
             private final Button editBtn = new Button("Edit");
@@ -229,7 +231,7 @@ public class FXMLDocumentController implements Initializable {
             }
         });
         
-        // Request table actions - UPDATED to show details
+        // Request table actions
         colRequestActions.setCellFactory(param -> new TableCell<Request, String>() {
             private final Button detailsBtn = new Button("Details");
             private final Button editBtn = new Button("Edit");
@@ -283,13 +285,13 @@ public class FXMLDocumentController implements Initializable {
                 if (newTab != null) {
                     switch (newTab.getText()) {
                         case "Students":
-                            loadStudentsWithRelations(); // UPDATED: Load with relations
+                            loadStudentsWithRelations();
                             break;
                         case "Academic Records":
                             loadAcademicRecords();
                             break;
                         case "Requests":
-                            loadRequestsWithStudent(); // UPDATED: Load with student info
+                            loadRequestsWithStudent();
                             break;
                     }
                 }
@@ -313,7 +315,6 @@ public class FXMLDocumentController implements Initializable {
             });
     }
     
-    // NEW: Setup double-click listeners for detailed views
     private void setupDoubleClickListeners() {
         studentsTable.setRowFactory(tv -> {
             TableRow<Student> row = new TableRow<>();
@@ -338,9 +339,7 @@ public class FXMLDocumentController implements Initializable {
         });
     }
     
-    // NEW: Show detailed student information with academics and requests
     private void showStudentDetails(Student student) {
-        // Load full student data with relationships
         Student fullStudent = apiService.getStudentWithRelations(student.getId());
         if (fullStudent == null) {
             showAlert("Error", "Could not load student details", Alert.AlertType.ERROR);
@@ -401,9 +400,7 @@ public class FXMLDocumentController implements Initializable {
         alert.showAndWait();
     }
     
-    // NEW: Show detailed request information with student
     private void showRequestDetails(Request request) {
-        // Load full request data with student relationship
         Request fullRequest = apiService.getRequestWithStudent(request.getId());
         if (fullRequest == null) {
             showAlert("Error", "Could not load request details", Alert.AlertType.ERROR);
@@ -450,7 +447,6 @@ public class FXMLDocumentController implements Initializable {
         alert.showAndWait();
     }
     
-    // [Keep all your existing methods for addStudent, updateStudent, searchStudents, etc.]
     // Student Methods
     @FXML
     private void addStudent() {
@@ -470,7 +466,7 @@ public class FXMLDocumentController implements Initializable {
             if (createdStudent != null) {
                 showAlert("Success", "Student added successfully!", Alert.AlertType.INFORMATION);
                 clearStudentForm();
-                loadStudentsWithRelations(); // UPDATED
+                loadStudentsWithRelations();
             }
         } catch (Exception e) {
             showAlert("Error", "Failed to add student: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -494,7 +490,7 @@ public class FXMLDocumentController implements Initializable {
             if (updatedStudent != null) {
                 showAlert("Success", "Student updated successfully!", Alert.AlertType.INFORMATION);
                 clearStudentForm();
-                loadStudentsWithRelations(); // UPDATED
+                loadStudentsWithRelations();
             }
         } catch (Exception e) {
             showAlert("Error", "Failed to update student: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -555,7 +551,7 @@ public class FXMLDocumentController implements Initializable {
             boolean success = apiService.deleteStudent(studentId);
             if (success) {
                 showAlert("Success", "Student deleted successfully!", Alert.AlertType.INFORMATION);
-                loadStudentsWithRelations(); // UPDATED
+                loadStudentsWithRelations();
             } else {
                 showAlert("Error", "Failed to delete student", Alert.AlertType.ERROR);
             }
@@ -670,7 +666,7 @@ public class FXMLDocumentController implements Initializable {
             if (createdRequest != null) {
                 showAlert("Success", "Request submitted successfully!", Alert.AlertType.INFORMATION);
                 clearRequestForm();
-                loadRequestsWithStudent(); // UPDATED
+                loadRequestsWithStudent();
             }
         } catch (NumberFormatException e) {
             showAlert("Error", "Please enter valid numeric IDs", Alert.AlertType.ERROR);
@@ -698,7 +694,7 @@ public class FXMLDocumentController implements Initializable {
             if (updatedRequest != null) {
                 showAlert("Success", "Request updated successfully!", Alert.AlertType.INFORMATION);
                 clearRequestForm();
-                loadRequestsWithStudent(); // UPDATED
+                loadRequestsWithStudent();
             }
         } catch (NumberFormatException e) {
             showAlert("Error", "Please enter valid numeric IDs", Alert.AlertType.ERROR);
@@ -740,14 +736,14 @@ public class FXMLDocumentController implements Initializable {
             boolean success = apiService.deleteRequest(requestId);
             if (success) {
                 showAlert("Success", "Request deleted successfully!", Alert.AlertType.INFORMATION);
-                loadRequestsWithStudent(); // UPDATED
+                loadRequestsWithStudent();
             } else {
                 showAlert("Error", "Failed to delete request", Alert.AlertType.ERROR);
             }
         }
     }
     
-    // Data Loading Methods - UPDATED for relationships
+    // Data Loading Methods
     private void loadStudents() {
         try {
             studentList.setAll(apiService.getAllStudents());
@@ -756,7 +752,6 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
-    // NEW: Load students with relationships
     private void loadStudentsWithRelations() {
         try {
             studentList.setAll(apiService.getAllStudentsWithRelations());
@@ -781,7 +776,6 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
-    // NEW: Load requests with student relationships
     private void loadRequestsWithStudent() {
         try {
             requestList.setAll(apiService.getAllRequestsWithStudent());

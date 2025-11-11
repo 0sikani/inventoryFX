@@ -10,7 +10,7 @@
       <!-- Header -->
       <BorderPane layoutY="0.0" prefHeight="80.0" prefWidth="1350.0" styleClass="header">
          <center>
-            <Label text="Inventory" styleClass="header-title">
+            <Label text="Student Management System" styleClass="header-title">
                <font>
                   <Font name="System Bold" size="28.0" />
                </font>
@@ -60,7 +60,7 @@
                            </children>
                         </VBox>
 
-                        <!-- Students Table - Reduced height -->
+                        <!-- Students Table -->
                         <TableView fx:id="studentsTable" layoutX="540.0" layoutY="110.0" prefHeight="420.0" prefWidth="750.0">
                            <columns>
                               <TableColumn fx:id="colStudentId" prefWidth="80.0" text="ID" />
@@ -99,7 +99,7 @@
                            </children>
                         </VBox>
 
-                        <!-- Academic Records Table - Reduced height -->
+                        <!-- Academic Records Table -->
                         <TableView fx:id="academicTable" layoutX="540.0" layoutY="20.0" prefHeight="520.0" prefWidth="750.0">
                            <columns>
                               <TableColumn fx:id="colAcademicId" prefWidth="80.0" text="ID" />
@@ -141,9 +141,10 @@
                            </children>
                         </VBox>
 
-                        <!-- Requests Table - Reduced height -->
+                        <!-- Requests Table -->
                         <TableView fx:id="requestsTable" layoutX="540.0" layoutY="20.0" prefHeight="520.0" prefWidth="750.0">
                            <columns>
+                              <TableColumn fx:id="colRequestId" prefWidth="80.0" text="Request ID" />
                               <TableColumn fx:id="colStudentIdReq" prefWidth="80.0" text="Student ID" />
                               <TableColumn fx:id="colStudentNameReq" prefWidth="150.0" text="Student Name" />
                               <TableColumn fx:id="colAcademicIdReq" prefWidth="80.0" text="Academic ID" />
