@@ -1,0 +1,52 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 
+                              http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+    <id>distribution</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    
+    <fileSets>
+        <!-- Application Executable -->
+        <fileSet>
+            <directory>target</directory>
+            <includes>
+                <include>student-management-client.exe</include>
+                <include>student-management-client-${version}.jar</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        
+        <!-- Configuration Files -->
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>*.properties</include>
+                <include>*.fxml</include>
+                <include>*.css</include>
+            </includes>
+            <outputDirectory>/config</outputDirectory>
+        </fileSet>
+        
+        <!-- Documentation -->
+        <fileSet>
+            <directory>.</directory>
+            <includes>
+                <include>README.md</include>
+                <include>LICENSE</include>
+            </includes>
+            <outputDirectory>/docs</outputDirectory>
+        </fileSet>
+        
+        <!-- Batch Scripts -->
+        <fileSet>
+            <directory>src/main/scripts</directory>
+            <includes>
+                <include>*.bat</include>
+            </includes>
+            <outputDirectory>/scripts</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>
