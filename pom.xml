@@ -2,6 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.studentmanagementsystem</groupId>
@@ -16,25 +17,35 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
+
+        <!-- JavaFX: Fixed version and classifier -->
         <javafx.version>25.0.1</javafx.version>
-        <junit.version>5.9.3</junit.version>
-        <!-- CORRECTED: Changed from 'win-x64' to 'win' -->
         <javafx.platform>win</javafx.platform>
-        <!-- Spring and Jackson versions -->
-        <spring.version>5.3.30</spring.version>
+
+        <!-- Dependency versions -->
+        <spring.version>6.0.13</spring.version>
         <jackson.version>2.15.2</jackson.version>
-        <!-- Plugin versions -->
+        <slf4j.version>2.0.9</slf4j.version>
+        <logback.version>1.4.11</logback.version>
+        <junit.version>5.9.3</junit.version>
+        <httpclient5.version>5.2.1</httpclient5.version>
+
+        <!-- Plugin Versions -->
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
         <maven.shade.plugin.version>3.4.1</maven.shade.plugin.version>
         <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
         <maven.assembly.plugin.version>3.6.0</maven.assembly.plugin.version>
+        <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
         <launch4j.maven.plugin.version>2.1.1</launch4j.maven.plugin.version>
         <maven.dependency.plugin.version>3.6.1</maven.dependency.plugin.version>
     </properties>
 
-    <!-- ADD THIS REPOSITORY SECTION -->
     <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
         <repository>
             <id>gluon</id>
             <url>https://repo.gluonhq.com/repository/releases/</url>
@@ -42,7 +53,7 @@
     </repositories>
 
     <dependencies>
-        <!-- JavaFX Dependencies (platform-specific classifier) -->
+        <!-- JavaFX Dependencies (Fixed version/classifier) -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -51,7 +62,7 @@
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
-            <artifactId>javafx-base</artifactId>
+            <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
             <classifier>${javafx.platform}</classifier>
         </dependency>
@@ -63,26 +74,39 @@
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
+            <artifactId>javafx-base</artifactId>
             <version>${javafx.version}</version>
             <classifier>${javafx.platform}</classifier>
         </dependency>
-        
-        <!-- Spring Web for REST Template -->
+
+        <!-- Spring Framework -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
-        <!-- Jackson for JSON processing -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-        
-        <!-- Jackson core and annotations -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -93,36 +117,32 @@
             <artifactId>jackson-annotations</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-        
-        <!-- ADD THIS: Jackson Java 8 Date/Time module -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-        
-        <!-- Spring Core -->
+
+        <!-- Logging -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
-        
-        <!-- Spring Beans -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        
-        <!-- Spring Context -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
 
-        <!-- Testing Dependencies -->
+        <!-- Apache HttpClient 5 -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient5.version}</version>
+        </dependency>
+
+        <!-- Testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -135,52 +155,41 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        
-        <!-- SLF4J API for logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.9</version>
-        </dependency>
-        
-        <!-- SLF4J Simple Implementation for logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>2.0.9</version>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Maven Compiler Plugin -->
+            <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <source>25</source>
+                    <target>25</target>
+                    <release>25</release>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
 
-            <!-- JavaFX Maven Plugin for development -->
+            <!-- JavaFX Plugin -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>${javafx.maven.plugin.version}</version>
                 <configuration>
                     <mainClass>com.studentmanagementsystem.App</mainClass>
-                    <jvmArgs>
-                        <jvmArg>--enable-native-access=javafx.graphics</jvmArg>
-                        <jvmArg>--add-opens=javafx.controls/javafx.scene.control=ALL-UNNAMED</jvmArg>
-                        <jvmArg>--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED</jvmArg>
-                    </jvmArgs>
+                    <options>
+                        <option>--enable-native-access=javafx.graphics</option>
+                        <option>--add-opens=javafx.controls/javafx.scene.control=ALL-UNNAMED</option>
+                        <option>--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED</option>
+                        <option>--add-opens=java.base/java.lang=ALL-UNNAMED</option>
+                        <option>--add-opens=java.base/java.util=ALL-UNNAMED</option>
+                    </options>
                 </configuration>
             </plugin>
 
-            <!-- Maven Shade Plugin for creating executable fat JAR -->
+            <!-- Shade Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -197,26 +206,14 @@
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.studentmanagementsystem.App</mainClass>
                                 </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>module-info.class</exclude>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <finalName>student-management-client-${project.version}</finalName>
+                            <finalName>${project.artifactId}-${project.version}-fat</finalName>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- Maven Surefire Plugin for running tests -->
+            <!-- Surefire Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -225,106 +222,27 @@
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
+            <!-- Java Compiler -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.11.0</version>
+            <configuration>
+                <release>23</release>
+            </configuration>
+        </plugin>
 
-            <!-- Create Windows EXE with Launch4j - FIXED CONFIGURATION -->
-            <plugin>
-                <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                <artifactId>launch4j-maven-plugin</artifactId>
-                <version>${launch4j.maven.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>l4j-clui</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>launch4j</goal>
-                        </goals>
-                        <configuration>
-                            <headerType>gui</headerType>
-                            <jar>target/student-management-client-${project.version}.jar</jar>
-                            <outfile>target/student-management-client.exe</outfile>
-                            <classPath>
-                                <mainClass>com.studentmanagementsystem.App</mainClass>
-                            </classPath>
-                            <icon>src/main/resources/icon.ico</icon>
-                            <jre>
-                                <minVersion>17</minVersion>
-                                <path>jre</path>
-                            </jre>
-                            <versionInfo>
-                                <fileVersion>1.0.0.0</fileVersion>
-                                <txtFileVersion>${project.version}</txtFileVersion>
-                                <fileDescription>Student Management System Client</fileDescription>
-                                <copyright>2024 Student Management System</copyright>
-                                <productVersion>1.0.0.0</productVersion>
-                                <txtProductVersion>${project.version}</txtProductVersion>
-                                <productName>Student Management System</productName>
-                                <companyName>Your Company</companyName>
-                                <internalName>StudentManagementClient</internalName>
-                                <originalFilename>student-management-client.exe</originalFilename>
-                            </versionInfo>
-                            <!-- FIXED: Correct message parameter names -->
-                            <messages>
-                                <startupErr>The application requires Java 17 or later. Please install Java Runtime Environment.</startupErr>
-                                <bundledJreErr>Java Runtime Environment not found. Please install JRE 17+.</bundledJreErr>
-                                <jreVersionErr>Java version is too old. Please install JRE 17 or later.</jreVersionErr>
-                                <launcherErr>Failed to launch the application. Please check if Java is properly installed.</launcherErr>
-                            </messages>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Copy Dependencies for Distribution -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>${maven.dependency.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                            <includeScope>runtime</includeScope>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Maven Assembly Plugin for creating distribution packages -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven.assembly.plugin.version}</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/assembly/distribution.xml</descriptor>
-                    </descriptors>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.studentmanagementsystem.App</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+        <!-- JavaFX Maven Plugin -->
+        <plugin>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-maven-plugin</artifactId>
+            <version>0.0.8</version>
+            <configuration>
+                <mainClass>com.studentmanagementsystem.App</mainClass>
+            </configuration>
+        </plugin>
         </plugins>
 
-        <!-- Resource Management -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -340,15 +258,4 @@
             </resource>
         </resources>
     </build>
-
-    <profiles>
-        <profile>
-            <id>production</id>
-            <build>
-                <plugins>
-                    <!-- Additional production-specific plugins can go here -->
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
